@@ -40,16 +40,36 @@ const Label = ({ children, color = C.navy }) => (
   </label>
 );
 
-const Input = ({ value, onChange, placeholder, type = "text", small }) => (
-  <input type={type} value={value} onChange={e => onChange(e.target.value)}
-    placeholder={placeholder}
-    style={{ width: "100%", border: `2px solid ${C.lBlue}`, borderRadius: 6,
-      padding: small ? "6px 10px" : "9px 12px", fontSize: small ? 12 : 13,
-      color: C.dark, background: C.lGold, fontFamily: "inherit",
-      outline: "none", boxSizing: "border-box", transition: "border .2s" }}
-    onFocus={e => e.target.style.borderColor = C.navy}
-    onBlur={e => e.target.style.borderColor = C.lBlue} />
-);
+const formatNum = (val) => {
+  if (val === "" || val === null || val === undefined) return "";
+  const clean = String(val).replace(/\s/g, "").replace(/[^0-9]/g, "");
+  if (!clean) return "";
+  return Number(clean).toLocaleString("fr-FR");
+};
+const unformatNum = (val) => String(val).replace(/\s/g, "").replace(/[^0-9]/g, "");
+
+const Input = ({ value, onChange, placeholder, type = "text", small }) => {
+  const isNum = type === "number";
+  const displayVal = isNum ? formatNum(value) : value;
+  return (
+    <input
+      type="text"
+      value={displayVal}
+      onChange={e => {
+        const raw = isNum ? unformatNum(e.target.value) : e.target.value;
+        onChange(raw);
+      }}
+      placeholder={placeholder}
+      style={{ width: "100%", border: `2px solid ${C.lBlue}`, borderRadius: 6,
+        padding: small ? "6px 10px" : "9px 12px", fontSize: small ? 12 : 13,
+        color: C.dark, background: C.lGold, fontFamily: "inherit",
+        outline: "none", boxSizing: "border-box", transition: "border .2s",
+        textAlign: isNum ? "right" : "left" }}
+      onFocus={e => e.target.style.borderColor = C.navy}
+      onBlur={e => e.target.style.borderColor = C.lBlue}
+    />
+  );
+};
 
 const Textarea = ({ value, onChange, placeholder, rows = 3 }) => (
   <textarea value={value} onChange={e => onChange(e.target.value)}
